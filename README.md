@@ -35,9 +35,3 @@ python task.py -i <Atom Selection 1> -i <Atom Selection 2> -o <outputfile_name>
 ```
 python BaderMerge.py -i 1 -i 4 -i 5
 ```
-
-
-## TODO
-
-- The dimensial of Data -- Defalut 256000
-- The header of file -- Not sure
