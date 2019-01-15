@@ -1,10 +1,18 @@
-# CHGCAR /bader_filesarray merge
+# Bader Merge
 
 ## Rely
 
 - Python 3.6.5
 - numpy
-- pandas(TODO)
+
+## File Requirement
+
+In bader_files folder, there must be
+
+- CHGCAR
+- BvAt0001.dat
+- ...
+- BvAt000n.dat
 
 ## Methodology
 
@@ -16,11 +24,18 @@
 ## Useage
 
 ```
-python task.py -i <inputfile_1> -i <inputfile_2> -i <inputfile_n> -o <outputfile_name>
+python task.py -i <Atom Selection 1> -i <Atom Selection 2> -o <outputfile_name>
 ```
 
--i name of inputfile (In folder ./bader_files)
--o name of outputile (Optional, Defalt = "Out")
+-i Atom Selection
+-o name of outputile (Optional, Defalt = "CHGCAR_OUTPUT")
+
+## Example
+
+```
+python BaderMerge.py -i 1 -i 4 -i 5
+```
+
 
 ## TODO
 
