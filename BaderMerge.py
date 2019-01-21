@@ -1,15 +1,25 @@
 #!/usr/bin/env python
 import os, sys, getopt
 import numpy as np
+def replacefooter(content, flag):
+	finalcontent = content.split()
+	print(finalcontent)
 
 def addlines(linelist, lineindex, needlineindex):
 	output = ''
+	count = 1
 	for i in needlineindex:
 		startline = lineindex[int(i)-1]
 		endline = lineindex[int(i)]-1
 		flag = startline
-		for j in range(endline-startline+1):
-			output += linelist[flag]
+
+		templine = linelist[flag].split()
+		templinecontent = templine[0] + ' '+ templine[1] + '   ' + str(count) + '  ' +templine[3] + '\n'
+		count += 1
+		output += templinecontent
+
+		for j in range(endline-startline):
+			output += linelist[flag+1]
 			flag += 1
 	return output
 
@@ -41,7 +51,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 
 
 	for i in range(len(filename)):
-		path = str(os.getcwd())+"/bader_files/BvAt000"+filename[i]+".dat"
+		path = str(os.getcwd())+"/bader_files/BvAt"+filename[i]+".dat"
 		try:
 			x = open(path).readline()
 			print("Processing Atom#"+str(filename[i]))
@@ -67,7 +77,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	# print (footercontent)
 
 	np.savetxt(outname,res,fmt='%.11E',header=headercontent, footer=footercontent, comments='')
-
+	print ("Finish Successfully")
 
 
 def main(argv):
@@ -78,7 +88,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv, "ci:o:",["inputfile=","outputfile="])
 
 	except getopt.GetoptError:
-		print ("Error parameter: task.py -i <AtomSelection_1> -i <AtomSelection_2> -o <Outputfile_name>")
+		print ("Error parameter: BaderMerge.py -i <AtomSelection_1> -i <AtomSelection_2> -o <Outputfile_name>")
 		sys.exit(2)
 
 	for opt, arg in opts:
@@ -87,10 +97,17 @@ def main(argv):
 			sys.exit()
 
 		elif opt in ("-i","--inputfile"): #Atom-selection number
-			Atom_selection.append(arg)
+			# Atom_selection.append(arg)
+			pass
 
 		elif opt in ("-o","--outputfile"):
 			outputfile_name = arg
+
+	Atom_selection_file_path = str(os.getcwd())+ '/bader_files/atom_selection.txt'
+	Atom_selection_file = open(Atom_selection_file_path, 'r') 
+	sourcelines = Atom_selection_file.readlines()
+	for lines in sourcelines:
+		Atom_selection.append(lines.strip('\n'))
 
 	if Atom_selection == []:
 		print ("Please add -i atom-selection!")

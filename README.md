@@ -9,6 +9,7 @@
 
 In bader_files folder, there must be
 
+- atom_selection.txt
 - CHGCAR
 - BvAt0001.dat
 - ...
@@ -19,19 +20,19 @@ In bader_files folder, there must be
 - Read with function np.loadtxt()
 - Skip first 16 lines in .dat
 - Shape (51200,5) Totally 40*40*160 = 256000
+- Process the header and footer content
 - Save with np.savetxt
 
 ## Useage
 
 ```
-python task.py -i <Atom Selection 1> -i <Atom Selection 2> -o <outputfile_name>
+python task.py -o <outputfile_name>
 ```
 
--i Atom Selection
 -o name of outputile (Optional, Defalt = "CHGCAR_OUTPUT")
 
 ## Example
 
 ```
-python BaderMerge.py -i 1 -i 4 -i 5
+python BaderMerge.py
 ```
