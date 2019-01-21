@@ -29,7 +29,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	p = len(filename)
 	CHGCAR_path = str(os.getcwd())+ '/bader_files/CHGCAR'
 	#Add the first 6 lines in head
-	for i in range(5):
+	for i in range(6):
 		headercontent += open(CHGCAR_path).readlines()[i]
 	line_7 = open(CHGCAR_path).readlines()[6]
 	rows = 0
@@ -61,7 +61,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 				flag = 1
 			else:
 				res += a
-		except FileNotFoundError:
+		except:
 			print("Error: Cannot find "+str(filename[i]))
 
 	# Add footer

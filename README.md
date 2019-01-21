@@ -36,3 +36,10 @@ python task.py -o <outputfile_name>
 ```
 python BaderMerge.py
 ```
+
+## TODO
+
+- Space before matrix
+- Range/List mode atom selection
+- All file in one folder
+- Missing Line 6/Line 8
