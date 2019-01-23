@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 import os, sys, getopt
 import numpy as np
-def replacefooter(content, flag):
-	finalcontent = content.split()
-	print(finalcontent)
+
+def makeuplist():
+	templist = []
+	file_path = str(os.getcwd())+ '/atom_selection.txt'
+	file_content = open(file_path, 'r') 
+	sourcelines = file_content.readlines()
+	if sourcelines[0] == 'list\n':
+		for index in range(len(sourcelines)-1):
+			templist.append(sourcelines[index+1].strip('\n').zfill(4))
+	else :
+		pass
+	return templist
+
 
 def addlines(linelist, lineindex, needlineindex):
 	output = ''
@@ -27,7 +37,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	headercontent = ''
 	footercontent = ''
 	p = len(filename)
-	CHGCAR_path = str(os.getcwd())+ '/bader_files/CHGCAR'
+	CHGCAR_path = str(os.getcwd())+ '/CHGCAR'
 	#Add the first 6 lines in head
 	for i in range(6):
 		headercontent += open(CHGCAR_path).readlines()[i]
@@ -39,6 +49,9 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	#Add line #7
 	headercontent += '     ' + str(int(int(line_7.split()[0])/factor)) + '     '+ str(int(int(line_7.split()[1])/factor)) + '\n'
 	# open(CHGCAR_path).readlines()[0:5]
+	# Add line #8
+	headercontent += open(CHGCAR_path).readlines()[7]
+
 	for i in range(p):
 		nextrow = int(filename[i]) + 7
 		headercontent += open(CHGCAR_path).readlines()[nextrow]
@@ -51,7 +64,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 
 
 	for i in range(len(filename)):
-		path = str(os.getcwd())+"/bader_files/BvAt"+filename[i]+".dat"
+		path = str(os.getcwd())+"/BvAt"+filename[i]+".dat"
 		try:
 			x = open(path).readline()
 			print("Processing Atom#"+str(filename[i]))
@@ -65,7 +78,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 			print("Error: Cannot find "+str(filename[i]))
 
 	# Add footer
-	print (res.shape[0])
+	print ('Shape is '+str(res.shape[0]))
 	footerlist = open(CHGCAR_path).readlines()[res.shape[0]+10+rows : len(open(CHGCAR_path).readlines())]
 	footerindex = []
 	for i, val in enumerate(footerlist):
@@ -76,7 +89,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	footercontent = addlines(footerlist,footerindex,filename)
 	# print (footercontent)
 
-	np.savetxt(outname,res,fmt='%.11E',header=headercontent, footer=footercontent, comments='')
+	np.savetxt(outname,res,fmt=' %.11E %.11E %.11E %.11E %.11E',header=headercontent, footer=footercontent, comments='')
 	print ("Finish Successfully")
 
 
@@ -103,12 +116,13 @@ def main(argv):
 		elif opt in ("-o","--outputfile"):
 			outputfile_name = arg
 
-	Atom_selection_file_path = str(os.getcwd())+ '/bader_files/atom_selection.txt'
-	Atom_selection_file = open(Atom_selection_file_path, 'r') 
-	sourcelines = Atom_selection_file.readlines()
-	for lines in sourcelines:
-		Atom_selection.append(lines.strip('\n'))
-
+	# Atom_selection_file_path = str(os.getcwd())+ '/atom_selection.txt'
+	# Atom_selection_file = open(Atom_selection_file_path, 'r') 
+	# sourcelines = Atom_selection_file.readlines()
+	# for lines in sourcelines:
+	# 	Atom_selection.append(lines.strip('\n'))
+	Atom_selection = makeuplist()
+	#Atom_selection should be list ['0001','0002',etc.]
 	if Atom_selection == []:
 		print ("Please add -i atom-selection!")
 	else:

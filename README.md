@@ -15,6 +15,12 @@ In bader_files folder, there must be
 - ...
 - BvAt000n.dat
 
+## Usage of atom_selection.txt
+
+- First line must be 'list' or 'range'
+- if first line is list, then list the number in separate line
+- if ..
+
 ## Methodology
 
 - Read with function np.loadtxt()
