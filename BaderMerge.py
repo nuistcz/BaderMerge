@@ -67,7 +67,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 		path = str(os.getcwd())+"/BvAt"+filename[i]+".dat"
 		try:
 			x = open(path).readline()
-			print("Processing Atom#"+str(filename[i]))
+			print("Processing Atom #"+str(filename[i]))
 			a = np.loadtxt(path , skiprows = rows + 10)
 			if flag == 0:
 				res = a
@@ -75,7 +75,7 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 			else:
 				res += a
 		except:
-			print("Error: Cannot find "+str(filename[i]))
+			print("Error: Problem File "+"/BvAt"+filename[i]+".dat")
 
 	# Add footer
 	print ('Shape is '+str(res.shape[0]))
@@ -89,9 +89,48 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	footercontent = addlines(footerlist,footerindex,filename)
 	# print (footercontent)
 
-	np.savetxt(outname,res,fmt=' %.11E %.11E %.11E %.11E %.11E',header=headercontent, footer=footercontent, comments='')
+	#DELETE FINAL LINE
+	pass
+
+	np.savetxt(outname,res,fmt=' %.11E %.11E %.11E %.11E %.11E',header=headercontent, footer=footercontent[:-1], comments='')
 	print ("Finish Successfully")
 
+def check(filename):
+	for i in range(len(filename)):
+		path = str(os.getcwd())+"/BvAt"+filename[i]+".dat"
+		content = open(path).readlines()
+
+		lastrowlist = content[-1].split()
+		# print (lastrowlist)
+
+		#Stupid Method haha
+		if len(lastrowlist)==5:
+			print ("Atom #" + str(filename[i]) + " Martix Check Pass")
+		else:
+			if len(lastrowlist)==4:
+				lastrowlist.append(lastrowlist[-1])
+			elif len(lastrowlist)==3:
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+			elif len(lastrowlist)==2:
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+			elif len(lastrowlist)==1:
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+				lastrowlist.append(lastrowlist[-1])
+			# print (lastrowlist)
+			tempxx = " ".join(lastrowlist)
+			strlastrow = " " + tempxx + '\n'
+			# print (strlastrow)
+			finalcontent = content[:-1]
+			finalcontent.append (strlastrow)
+			fout = open(path,'w')
+			fout.writelines(finalcontent)
+			fout.close()
+			print ("Atom #" + str(filename[i]) + " Martix Makeup")
 
 def main(argv):
 	Atom_selection = []
@@ -128,8 +167,10 @@ def main(argv):
 	else:
 		print ("Atom selection:" + str(Atom_selection))
 		if outputfile_name != '':
+			check(Atom_selection)
 			mergy(Atom_selection,outputfile_name)
 		else:
+			check(Atom_selection)
 			mergy(Atom_selection)
 
 
