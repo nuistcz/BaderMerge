@@ -5,13 +5,34 @@ import numpy as np
 def makeuplist():
 	templist = []
 	file_path = str(os.getcwd())+ '/atom_selection.txt'
+	CHGCAR_path = str(os.getcwd())+ '/CHGCAR'
 	file_content = open(file_path, 'r') 
 	sourcelines = file_content.readlines()
-	if sourcelines[0] == 'list\n':
+	temp = open(CHGCAR_path).readlines()[6].split()
+	totallines = int(temp[0])+int(temp[1])
+
+	if sourcelines[0] == 'list\n' or sourcelines[0] == 'List\n' or sourcelines[0] == 'LIST\n':
 		for index in range(len(sourcelines)-1):
 			templist.append(sourcelines[index+1].strip('\n').zfill(4))
-	else :
-		pass
+	elif sourcelines[0] == 'range\n' or sourcelines[0] == 'Range\n'or sourcelines[0] == 'RANGE\n':
+		print ("Finding Selected Atom...")
+		rangemin = float(sourcelines[2].strip('\n'))
+		rangemax = float(sourcelines[3].strip('\n'))
+		if sourcelines[1] == 'x\n' or sourcelines[1] == 'X\n':
+			for j in range(totallines):
+				if float(open(CHGCAR_path).readlines()[8+j].split()[0])>=rangemin and float(open(CHGCAR_path).readlines()[8+j].split()[0])<rangemax:
+					templist.append(str(j+1).zfill(4))
+		elif sourcelines[1] == 'y\n' or sourcelines[1] == 'Y\n':
+			for j in range(totallines):
+				if float(open(CHGCAR_path).readlines()[8+j].split()[1])>=rangemin and float(open(CHGCAR_path).readlines()[8+j].split()[1])<rangemax:
+					templist.append(str(j+1).zfill(4))
+		elif sourcelines[1] == 'z\n' or sourcelines[1] == 'Z\n':
+			for j in range(totallines):
+				if float(open(CHGCAR_path).readlines()[8+j].split()[2])>=rangemin and float(open(CHGCAR_path).readlines()[8+j].split()[2])<rangemax:
+					templist.append(str(j+1).zfill(4))
+	else:
+		print ("Atom_selection.txt Error: MUST LABEL range or list in first line")
+		
 	return templist
 
 
@@ -155,11 +176,6 @@ def main(argv):
 		elif opt in ("-o","--outputfile"):
 			outputfile_name = arg
 
-	# Atom_selection_file_path = str(os.getcwd())+ '/atom_selection.txt'
-	# Atom_selection_file = open(Atom_selection_file_path, 'r') 
-	# sourcelines = Atom_selection_file.readlines()
-	# for lines in sourcelines:
-	# 	Atom_selection.append(lines.strip('\n'))
 	Atom_selection = makeuplist()
 	#Atom_selection should be list ['0001','0002',etc.]
 	if Atom_selection == []:

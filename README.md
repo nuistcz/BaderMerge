@@ -13,28 +13,46 @@ In bader_files folder, there must be
 - CHGCAR
 - BvAt0001.dat
 - ...
-- BvAt000n.dat
+- BvAtxxxx.dat
 
 ## Usage of atom_selection.txt
 
-- First line must be 'list' or 'range'
-- if first line is list, then list the number in separate line
-- if ..
+- First line must be 'list(List/LIST)' or 'range(Range/RANGE)'
+- If it's list mode, the next few rows should include each atom number
+- If it's range mode, the next row should be 'X/x', 'Y/y' or 'Z/z', then give the range minimum and maximum.
+
+### Example of atom_selection.txt
+
+Select No.1 No.4 and No.5 atom:
+```
+List
+1
+4
+5
+```
+
+Select atoms in z-aixs with range 0-0.5: (Includes 0 and Excludes 0.5)
+```
+Range
+z
+0
+0.5
+```
 
 ## Methodology
 
-- Read with function np.loadtxt()
-- Skip first 16 lines in .dat
-- Shape (51200,5) Totally 40*40*160 = 256000
+- Process atom_selection.txt
+- Find the atoms selected and print out
+- Read with function np.loadtxt(), skip the header rows
 - Process the header and footer content
+- Calculate the sum of them
 - Save with np.savetxt
 
 ## Useage
 
 ```
-python task.py -o <outputfile_name>
+python BaderMerge.py -o <outputfile_name>
 ```
-
 -o name of outputile (Optional, Defalt = "CHGCAR_OUTPUT")
 
 ## Example
@@ -42,11 +60,3 @@ python task.py -o <outputfile_name>
 ```
 python BaderMerge.py
 ```
-
-## TODO
-
-- Space before matrix
-- Range/List mode atom selection
-- All file in one folder
-- Missing Line 6/Line 8
-- ..
