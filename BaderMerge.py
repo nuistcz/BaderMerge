@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Version 1.0.1 Created by Z.Cao 2/Feb/2019
+# Version 1.0.2 Created by Z.Cao 2/Feb/2019
 import os, sys, getopt
 import numpy as np
 def cut(line):
@@ -63,7 +63,10 @@ def addlines(linelist, lineindex, needlineindex):
 		flag = startline
 
 		templine = linelist[flag].split()
-		templinecontent = templine[0] + ' '+ templine[1] + ' ' + str(count) + ' ' +templine[3] + '\n'
+		if count>9:
+			templinecontent = templine[0] + ' '+ templine[1] + ' ' + str(count) + ' ' +templine[3] + '\n'
+		else:
+			templinecontent = templine[0] + ' '+ templine[1] + '  ' + str(count) + ' ' +templine[3] + '\n'
 		count += 1
 		output += templinecontent
 
