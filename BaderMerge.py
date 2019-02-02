@@ -1,6 +1,22 @@
 #!/usr/bin/env python
 import os, sys, getopt
 import numpy as np
+def cut(line):
+	newline = []
+	for i in line.split():
+		if i[0] == '-':
+			newstr = i[0]+i[2]+i[1]
+			if i[-3:] == '-01':
+				newstr = i[0]+i[2]+i[1]+i[3:13]+'E'+'+00'
+			elif i[-3] == '+':
+				newstr = i[0]+i[2]+i[1]+i[3:13]+'E+'+str(int(i[-2:])+1).zfill(2)
+			elif i[-3] == '-':
+				newstr = i[0]+i[2]+i[1]+i[3:13]+'E-'+str(int(i[-2:])-1).zfill(2)
+			newline.append(newstr)
+		else:
+			newline.append(i)
+	final = ' ' + ' '.join(newline)+'\n'
+	return final
 
 def makeuplist():
 	templist = []
@@ -9,7 +25,8 @@ def makeuplist():
 	file_content = open(file_path, 'r') 
 	sourcelines = file_content.readlines()
 	temp = open(CHGCAR_path).readlines()[6].split()
-	totallines = int(temp[0])+int(temp[1])
+	tempnum = [int(i) for i in temp]
+	totallines = sum(tempnum)
 
 	if sourcelines[0] == 'list\n' or sourcelines[0] == 'List\n' or sourcelines[0] == 'LIST\n':
 		for index in range(len(sourcelines)-1):
@@ -45,7 +62,7 @@ def addlines(linelist, lineindex, needlineindex):
 		flag = startline
 
 		templine = linelist[flag].split()
-		templinecontent = templine[0] + ' '+ templine[1] + '   ' + str(count) + '  ' +templine[3] + '\n'
+		templinecontent = templine[0] + ' '+ templine[1] + '   ' + str(count) + ' ' +templine[3] + '\n'
 		count += 1
 		output += templinecontent
 
@@ -68,7 +85,11 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 		rows += int(s)
 	factor = int(rows/p)
 	#Add line #7
-	headercontent += '     ' + str(int(int(line_7.split()[0])/factor)) + '     '+ str(int(int(line_7.split()[1])/factor)) + '\n'
+	linenumber = [int(int(i)/factor+0.5) for i in line_7.split()]
+	print (linenumber)
+	# headercontent += '     ' + str(int(int(line_7.split()[0])/factor)) + '     '+ str(int(int(line_7.split()[1])/factor)) + '\n'
+	line7 = [str(i) for i in linenumber]
+	headercontent += '     '+'     '.join(line7) + '\n'
 	# open(CHGCAR_path).readlines()[0:5]
 	# Add line #8
 	headercontent += open(CHGCAR_path).readlines()[7]
@@ -110,11 +131,21 @@ def mergy(filename, outname = 'CHGCAR_OUTPUT'):
 	footercontent = addlines(footerlist,footerindex,filename)
 	# print (footercontent)
 
-	#DELETE FINAL LINE
-	pass
 
-	np.savetxt(outname,res,fmt=' %.11E %.11E %.11E %.11E %.11E',header=headercontent, footer=footercontent[:-1], comments='')
-	print ("Finish Successfully")
+	# np.savetxt('chgcar.temp',res,fmt=' %.11E %.11E %.11E %.11E %.11E',header=headercontent, footer=footercontent[:-1], comments='')
+	np.savetxt('chgcar.temp',res,fmt=' %.11E %.11E %.11E %.11E %.11E',comments='')
+	print ("Final Check Negative Value")
+
+	temppath = open(str(os.getcwd())+"/chgcar.temp").readlines()
+
+	fout = open(str(os.getcwd())+"/"+outname,'w')
+	fout.writelines(headercontent)
+	fout.writelines('\n')
+	for i in temppath:
+		fout.writelines(cut(i))
+	fout.writelines(footercontent[:-1])	
+	fout.close()
+	os.remove(str(os.getcwd())+'/chgcar.temp')
 
 def check(filename):
 	for i in range(len(filename)):
@@ -126,7 +157,7 @@ def check(filename):
 
 		#Stupid Method haha
 		if len(lastrowlist)==5:
-			print ("Atom #" + str(filename[i]) + " Martix Check Pass")
+			print ("Atom #" + str(filename[i]) + " Matrix Check Pass")
 		else:
 			if len(lastrowlist)==4:
 				lastrowlist.append(lastrowlist[-1])
@@ -151,7 +182,7 @@ def check(filename):
 			fout = open(path,'w')
 			fout.writelines(finalcontent)
 			fout.close()
-			print ("Atom #" + str(filename[i]) + " Martix Makeup")
+			print ("Atom #" + str(filename[i]) + " Matrix Makeup")
 
 def main(argv):
 	Atom_selection = []
